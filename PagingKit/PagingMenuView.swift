@@ -29,7 +29,7 @@ import UIKit
  A PagingMenuViewCell object presents the content for a single menu item when that item is within the paging menu view's visible bounds. 
  You can use this class as-is or subclass it to add additional properties and methods. The layout and presentation of cells is managed by the paging menu view.
  */
-open class PagingMenuViewCell: UIView {
+@objc open class PagingMenuViewCell: UIView {
     
     /**
      The selection state of the cell.
@@ -37,14 +37,14 @@ open class PagingMenuViewCell: UIView {
      It is not managed by this class and paging menu view now.
      You can use this property as an utility to manage selected state.
      */
-    open var isSelected: Bool = false
+    @objc open var isSelected: Bool = false
     
     /**
      A string that identifies the purpose of the view.
      
      The paging menu view identifies and queues reusable views using their reuse identifiers. The paging menu view sets this value when it first creates the view, and the value cannot be changed later. When your data source is prompted to provide a given view, it can use the reuse identifier to dequeue a view of the appropriate type.
     */
-    public internal(set) var identifier: String!
+    @objc public internal(set) var identifier: String!
     
     /**
      A index that identifier where the view locate on.
@@ -55,7 +55,7 @@ open class PagingMenuViewCell: UIView {
 }
 
 /// A view that focus menu corresponding to current page.
-public class PagingMenuFocusView: UIView {
+@objc public class PagingMenuFocusView: UIView {
     var selectedIndex: Int?
     
     override init(frame: CGRect) {

@@ -25,7 +25,7 @@
 import UIKit
 
 /// this represents the display and behaviour of the cells.
-public protocol PagingContentViewControllerDelegate: class {
+@objc public protocol PagingContentViewControllerDelegate: class {
     
     /// Tells the delegate when the user is abount to start scroll the content within the receiver.
     ///
@@ -86,7 +86,7 @@ extension PagingContentViewControllerDelegate {
 }
 
 /// The data source provides the paging content view controller object with the information it needs to construct and modify the contents.
-public protocol PagingContentViewControllerDataSource: class {
+@objc public protocol PagingContentViewControllerDataSource: class {
     
     /// Tells the data source to return the number of item in a paging scrollview of the view controller.
     ///
@@ -104,7 +104,7 @@ public protocol PagingContentViewControllerDataSource: class {
 }
 
 /// A view controller that lets the user navigate between pages of content, where each page is managed by its own view controller object.
-public class PagingContentViewController: UIViewController {
+@objc public class PagingContentViewController: UIViewController {
     fileprivate class ExplicitPaging {
         private var oneTimeHandler: (() -> Void)?
         private(set) var isPaging: Bool
@@ -134,25 +134,25 @@ public class PagingContentViewController: UIViewController {
     fileprivate var explicitPaging: ExplicitPaging?
 
     /// The object that acts as the delegate of the content view controller.
-    public weak var delegate: PagingContentViewControllerDelegate?
+    @objc public weak var delegate: PagingContentViewControllerDelegate?
     
     /// The object that provides view controllers.
-    public weak var dataSource: PagingContentViewControllerDataSource?
+    @objc public weak var dataSource: PagingContentViewControllerDataSource?
 
-    public var isEnabledPreloadContent = true
+    @objc public var isEnabledPreloadContent = true
 
     /// The ratio at which the origin of the content view is offset from the origin of the scroll view.
-    public var contentOffsetRatio: CGFloat {
+    @objc public var contentOffsetRatio: CGFloat {
         return scrollView.contentOffset.x / (scrollView.contentSize.width - scrollView.bounds.width)
     }
 
     /// The ratio at which the origin of the left side content is offset from the origin of the page.
-    public var pagingPercent: CGFloat {
+    @objc public var pagingPercent: CGFloat {
         return scrollView.contentOffset.x.truncatingRemainder(dividingBy: scrollView.bounds.width) / scrollView.bounds.width
     }
     
     /// The index at which the view controller is showing.
-    public var currentPageIndex: Int {
+    @objc public var currentPageIndex: Int {
         let scrollToRightSide = (pagingPercent > 0.5)
         let rightSidePageIndex = min(cachedViewControllers.endIndex, leftSidePageIndex + 1)
         return scrollToRightSide ? rightSidePageIndex : leftSidePageIndex
@@ -161,9 +161,9 @@ public class PagingContentViewController: UIViewController {
     ///  Reloads the content of the view controller.
     ///
     /// - Parameter page: An index to show after reloading.
-    public func reloadData(with page: Int? = nil, completion: (() -> Void)? = nil) {
+    @objc public func reloadData(with page: Int, completion: (() -> Void)? = nil) {
         removeAll()
-        let preferredPage = page ?? leftSidePageIndex
+        let preferredPage = page
         leftSidePageIndex = preferredPage
         initialLoad(with: preferredPage)
         UIView.pk.catchLayoutCompletion(
@@ -179,12 +179,16 @@ public class PagingContentViewController: UIViewController {
         )
     }
     
+    @objc public func reloadData() {
+        reloadData(with: leftSidePageIndex)
+    }
+    
     /// Scrolls a specific page of the contents so that it is visible in the receiver.
     ///
     /// - Parameters:
     ///   - page: A index defining an content of the content view controller.
     ///   - animated: true if the scrolling should be animated, false if it should be immediate.
-    public func scroll(to page: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    @objc public func scroll(to page: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
         delegate?.contentViewController(viewController: self, willBeginPagingAt: leftSidePageIndex, animated: animated)
         
         loadPagesIfNeeded(page: page)
@@ -223,7 +227,7 @@ public class PagingContentViewController: UIViewController {
     }
     
     /// Return scrollView that the content view controller uses to show the contents.
-    public let scrollView: UIScrollView = {
+    @objc public let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isPagingEnabled = true
         scrollView.showsVerticalScrollIndicator = false
@@ -234,7 +238,7 @@ public class PagingContentViewController: UIViewController {
         return scrollView
     }()
     
-    public func preloadContentIfNeeded(with scrollingPercent: CGFloat) {
+    @objc public func preloadContentIfNeeded(with scrollingPercent: CGFloat) {
         guard isEnabledPreloadContent else { return }
         
         if scrollingPercent > 0.5 {
@@ -244,7 +248,7 @@ public class PagingContentViewController: UIViewController {
         }
     }
     
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         
         if #available(iOS 11.0, *) {
@@ -257,7 +261,7 @@ public class PagingContentViewController: UIViewController {
         view.backgroundColor = .clear
     }
 
-    override public func viewDidLayoutSubviews() {
+    override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollView.contentSize = CGSize(
             width: scrollView.bounds.size.width * CGFloat(numberOfPages),
@@ -272,11 +276,11 @@ public class PagingContentViewController: UIViewController {
         }
     }
     
-    override public func didReceiveMemoryWarning() {
+    override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
 
-    override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         removeAll()
         initialLoad(with: leftSidePageIndex)
         coordinator.animate(alongsideTransition: { [weak self] (context) in

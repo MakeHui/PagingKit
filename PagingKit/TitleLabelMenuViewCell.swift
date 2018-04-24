@@ -28,10 +28,10 @@ import UIKit
 /// Basic style of cell
 /// - center text
 /// - emphasize text to focus color
-public class TitleLabelMenuViewCell: PagingMenuViewCell {
+@objc public class TitleLabelMenuViewCell: PagingMenuViewCell {
 
     ///  The text color when selecred
-    public var focusColor = UIColor.pk.focusRed {
+    @objc public var focusColor = UIColor.pk.focusRed {
         didSet {
             if isSelected {
                 titleLabel.textColor = focusColor
@@ -40,7 +40,7 @@ public class TitleLabelMenuViewCell: PagingMenuViewCell {
     }
     
     /// The normal text color.
-    public var normalColor = UIColor.black {
+    @objc public var normalColor = UIColor.black {
         didSet {
             if !isSelected {
                 titleLabel.textColor = normalColor
@@ -48,19 +48,19 @@ public class TitleLabelMenuViewCell: PagingMenuViewCell {
         }
     }
     
-    public let titleLabel = { () -> UILabel in
+    @objc public let titleLabel = { () -> UILabel in
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 17)
         label.textAlignment = .center
         return label
     }()
     
-    public required init?(coder aDecoder: NSCoder) {
+    @objc public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
     
-    public override init(frame: CGRect) {
+    @objc public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
@@ -77,7 +77,7 @@ public class TitleLabelMenuViewCell: PagingMenuViewCell {
         ])
     }
     
-    override public var isSelected: Bool {
+    override open var isSelected: Bool {
         didSet {
             if isSelected {
                 titleLabel.textColor = focusColor
